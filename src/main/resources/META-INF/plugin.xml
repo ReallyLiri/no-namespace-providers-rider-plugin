@@ -1,0 +1,18 @@
+<idea-plugin>
+    <id>com.reallyliri.plugins.no-namespace-providers</id>
+    <name>No Namespace Providers</name>
+    <vendor url="https://github.com/reallyliri">ReallyLiri</vendor>
+    <version>1.0</version>
+    <idea-version since-build="*" />
+
+    <description>Automatically mark all directories in your projects as not a namespace providers.</description>
+
+    <depends>com.intellij.modules.rider</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <solutionExplorerCustomization implementation="com.reallyliri.plugins.namespaceproviders.NamespaceProviderSetterListener"/>
+    </extensions>
+
+    <actions>
+    </actions>
+</idea-plugin>
