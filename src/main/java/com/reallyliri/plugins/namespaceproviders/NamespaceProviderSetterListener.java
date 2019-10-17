@@ -122,7 +122,7 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
     private String notNamespaceProviderLine(String relativeDirectoryPath) {
         return
             "<s:Boolean x:Key=\"/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=" +
-                relativeDirectoryPath.replace(File.separator, "_005C") +
+                relativeDirectoryPath.toLowerCase().replace(File.separator, "_005C") +
                 "/@EntryIndexedValue\">True</s:Boolean>";
     }
 
