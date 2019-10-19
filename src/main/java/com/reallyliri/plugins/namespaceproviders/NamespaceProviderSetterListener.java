@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.rider.model.RdCustomLocation;
 import com.jetbrains.rider.model.RdProjectDescriptor;
+import com.jetbrains.rider.model.RdProjectFileDescriptor;
 import com.jetbrains.rider.model.RdProjectFolderDescriptor;
 import com.jetbrains.rider.model.RdSolutionDescriptor;
 import com.jetbrains.rider.projectView.nodes.ProjectModelNode;
@@ -62,8 +63,14 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         Set<String> projectDirectoriesPaths = directoriesPathsByProject.get(projectName);
         Set<String> currentDirectoryNodesPaths = parentNode.getChildren(false, false).stream()
             .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
+            .filter(node -> node.getChildren(false, false).stream()
+                .anyMatch(child -> child.getDescriptor() instanceof RdProjectFileDescriptor && child.getName().endsWith(".cs"))
+            )
             .map(this::nodeFullRelativePath)
             .collect(Collectors.toSet());
+        if (parentNode.getDescriptor() instanceof RdProjectFolderDescriptor) {
+            currentDirectoryNodesPaths.add(nodeFullRelativePath(parentNode));
+        }
 
         Set<String> addedDirectories = difference(currentDirectoryNodesPaths, projectDirectoriesPaths);
         // TODO - add support for removed directories - not that simple due to current node being only one level of the tree
