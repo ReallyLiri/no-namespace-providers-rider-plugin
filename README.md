@@ -2,6 +2,8 @@
 
 <img src="src/main/resources/META-INF/pluginIcon.svg" alt="drawing" width="40"/>
 
+[![badge](https://img.shields.io/jetbrains/plugin/v/13188-no-namespace-providers.svg?label=Rider%20plugin)](https://plugins.jetbrains.com/plugin/13188-no-namespace-providers)
+
 Automatically mark all directories in your projects as not a namespace providers.
 
 ![preview](https://i.imgur.com/ojNEJ0f.png)
