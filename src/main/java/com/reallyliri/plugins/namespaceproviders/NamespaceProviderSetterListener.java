@@ -63,14 +63,8 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         Set<String> projectDirectoriesPaths = directoriesPathsByProject.get(projectName);
         Set<String> currentDirectoryNodesPaths = parentNode.getChildren(false, false).stream()
             .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
-            .filter(node -> node.getChildren(false, false).stream()
-                .anyMatch(child -> child.getDescriptor() instanceof RdProjectFileDescriptor && child.getName().endsWith(".cs"))
-            )
             .map(this::nodeFullRelativePath)
             .collect(Collectors.toSet());
-        if (parentNode.getDescriptor() instanceof RdProjectFolderDescriptor) {
-            currentDirectoryNodesPaths.add(nodeFullRelativePath(parentNode));
-        }
 
         Set<String> addedDirectories = difference(currentDirectoryNodesPaths, projectDirectoriesPaths);
         // TODO - add support for removed directories - not that simple due to current node being only one level of the tree
