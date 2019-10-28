@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.rider.model.RdCustomLocation;
 import com.jetbrains.rider.model.RdProjectDescriptor;
-import com.jetbrains.rider.model.RdProjectFileDescriptor;
 import com.jetbrains.rider.model.RdProjectFolderDescriptor;
 import com.jetbrains.rider.model.RdSolutionDescriptor;
 import com.jetbrains.rider.projectView.nodes.ProjectModelNode;
@@ -50,6 +49,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
                 .filter(node -> node.getDescriptor() instanceof RdProjectDescriptor)
                 .forEach(projectNode -> {
                     String projectPath = projectPath(projectNode);
+                    if (projectPath == null) {
+                        return;
+                    }
                     String projectName = Paths.get(projectPath).getFileName().toString();
                     if (!directoriesPathsByProject.containsKey(projectName)) {
                         directoriesPathsByProject.put(projectName, new HashSet<>());
@@ -59,6 +61,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         }
 
         String projectPath = projectPath(parentNode);
+        if (projectPath == null) {
+            return;
+        }
         String projectName = Paths.get(projectPath).getFileName().toString();
         Set<String> projectDirectoriesPaths = directoriesPathsByProject.get(projectName);
         Set<String> currentDirectoryNodesPaths = parentNode.getChildren(false, false).stream()
@@ -106,8 +111,11 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
     }
 
     private String projectPath(ProjectModelNode node) {
-        while (!(node.getDescriptor() instanceof RdProjectDescriptor)) {
+        while (node != null && !(node.getDescriptor() instanceof RdProjectDescriptor)) {
             node = node.getParent();
+        }
+        if (node == null) {
+            return null;
         }
         return ((RdCustomLocation) node.getDescriptor().getLocation()).getCustomLocation();
     }
