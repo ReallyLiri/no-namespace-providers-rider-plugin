@@ -65,6 +65,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
             return;
         }
         String projectName = Paths.get(projectPath).getFileName().toString();
+        if (!directoriesPathsByProject.containsKey(projectName)) {
+            return;
+        }
         Set<String> projectDirectoriesPaths = directoriesPathsByProject.get(projectName);
         Set<String> currentDirectoryNodesPaths = parentNode.getChildren(false, false).stream()
             .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
