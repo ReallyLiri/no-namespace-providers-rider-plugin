@@ -38,7 +38,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         try {
             listen(parentNode);
         } catch (Throwable ex) {
-            log.error(String.format("NamespaceProviderSetterListener error on node %s", parentNode.getName()), ex);
+            if (!ex.getMessage().contains("EventQueue.isDispatchThread()=false")) {
+                log.error(String.format("NamespaceProviderSetterListener error on node %s", parentNode.getName()), ex);
+            }
         }
         return super.getChildren(parentNode); // always returns empty, but its fine
     }
