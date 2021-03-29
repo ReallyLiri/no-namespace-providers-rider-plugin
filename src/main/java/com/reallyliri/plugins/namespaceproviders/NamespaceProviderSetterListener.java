@@ -1,5 +1,6 @@
 package com.reallyliri.plugins.namespaceproviders;
 
+import com.google.common.collect.Streams;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -7,8 +8,8 @@ import com.jetbrains.rider.model.RdCustomLocation;
 import com.jetbrains.rider.model.RdProjectDescriptor;
 import com.jetbrains.rider.model.RdProjectFolderDescriptor;
 import com.jetbrains.rider.model.RdSolutionDescriptor;
-import com.jetbrains.rider.projectView.nodes.ProjectModelNode;
 import com.jetbrains.rider.projectView.views.solutionExplorer.SolutionExplorerCustomization;
+import com.jetbrains.rider.projectView.workspace.ProjectModelEntity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
 
     @NotNull
     @Override
-    public List<AbstractTreeNode<?>> getChildren(@NotNull ProjectModelNode parentNode) {
+    public List<AbstractTreeNode<?>> getChildren(@NotNull ProjectModelEntity parentNode) {
         try {
             listen(parentNode);
         } catch (Throwable ex) {
@@ -45,9 +46,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         return super.getChildren(parentNode); // always returns empty, but its fine
     }
 
-    private void listen(ProjectModelNode parentNode) throws IOException {
+    private void listen(ProjectModelEntity parentNode) throws IOException {
         if (parentNode.getDescriptor() instanceof RdSolutionDescriptor) {
-            parentNode.getChildren(false, false).stream()
+            Streams.stream(parentNode.getChildrenEntities().iterator())
                 .filter(node -> node.getDescriptor() instanceof RdProjectDescriptor)
                 .forEach(projectNode -> {
                     String projectPath = projectPath(projectNode);
@@ -71,10 +72,11 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
             return;
         }
         Set<String> projectDirectoriesPaths = directoriesPathsByProject.get(projectName);
-        Set<String> currentDirectoryNodesPaths = parentNode.getChildren(false, false).stream()
-            .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
-            .map(this::nodeFullRelativePath)
-            .collect(Collectors.toSet());
+        Set<String> currentDirectoryNodesPaths =
+            Streams.stream(parentNode.getChildrenEntities().iterator())
+                .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
+                .map(this::nodeFullRelativePath)
+                .collect(Collectors.toSet());
 
         Set<String> addedDirectories = difference(currentDirectoryNodesPaths, projectDirectoriesPaths);
         // TODO - add support for removed directories - not that simple due to current node being only one level of the tree
@@ -115,9 +117,9 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         return Paths.get(String.format("%s.DotSettings", projectPath));
     }
 
-    private String projectPath(ProjectModelNode node) {
+    private String projectPath(ProjectModelEntity node) {
         while (node != null && !(node.getDescriptor() instanceof RdProjectDescriptor)) {
-            node = node.getParent();
+            node = node.getParentEntity();
         }
         if (node == null) {
             return null;
@@ -125,8 +127,8 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         return ((RdCustomLocation) node.getDescriptor().getLocation()).getCustomLocation();
     }
 
-    private String nodeFullRelativePath(ProjectModelNode node) {
-        ProjectModelNode parent = node.getParent();
+    private String nodeFullRelativePath(ProjectModelEntity node) {
+        ProjectModelEntity parent = node.getParentEntity();
         if (parent == null || !(parent.getDescriptor() instanceof RdProjectFolderDescriptor)) {
             return node.getName();
         }

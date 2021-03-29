@@ -1,27 +1,36 @@
+buildscript {
+    repositories {
+        maven { url 'https://www.myget.org/F/rd-snapshots/maven/' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.jetbrains.rd:rd-gen:0.201.57") // https://www.myget.org/feed/rd-snapshots/package/maven/com.jetbrains.rd/rd-gen
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
-    id 'org.jetbrains.intellij' version '0.4.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
+    id 'org.jetbrains.intellij' version '0.4.19'
 }
 
 repositories {
-    maven { url "https://www.jetbrains.com/intellij-repository/releases" }
-    maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
-    mavenCentral()
-    jcenter()
+    maven { url 'https://cache-redirector.jetbrains.com/intellij-repository/snapshots' }
+    maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
 }
 
 instrumentCode {
-    compilerVersion = "192.6817.32" // latest build of com.jetbrains.intellij.java from https://www.jetbrains.com/intellij-repository/releases/
+    compilerVersion = "203.7717.56" // latest build of com.jetbrains.intellij.java from https://www.jetbrains.com/intellij-repository/releases/
 }
 
 group 'com.reallyliri.plugins'
-version '1.4.1'
+version '1.5'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 compileKotlin {
-    kotlinOptions { jvmTarget = "1.8" }
+    kotlinOptions { jvmTarget = "11" }
 }
 
 dependencies {
@@ -31,8 +40,8 @@ dependencies {
 intellij {
     // see https://www.jetbrains.com/help/resharper/sdk/Products/Rider.html#plugin-project-jvm
     type = 'RD'
-    version = "2019.2-SNAPSHOT"
-    downloadSources = false
+    version = "2021.2-SNAPSHOT"
+    downloadSources = true
     intellij.updateSinceUntilBuild false
 }
 
