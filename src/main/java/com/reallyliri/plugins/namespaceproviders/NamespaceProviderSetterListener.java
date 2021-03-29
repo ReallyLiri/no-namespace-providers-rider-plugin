@@ -27,6 +27,15 @@ import org.jetbrains.annotations.NotNull;
 public class NamespaceProviderSetterListener extends SolutionExplorerCustomization {
     private static final Logger log = Logger.getInstance(NamespaceProviderSetterListener.class);
     private Map<String, Set<String>> directoriesPathsByProject = new HashMap<>();
+    private Set<String> ignoredDirectoryNames = Set.of(
+        ".idea",
+        "bin",
+        "bld",
+        "build",
+        "logs",
+        "obj",
+        "target"
+    );
 
     public NamespaceProviderSetterListener(@NotNull Project project) {
         // its called project, but actually its a solution, probably due to it being project in other IDEA products
@@ -75,6 +84,7 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         Set<String> currentDirectoryNodesPaths =
             Streams.stream(parentNode.getChildrenEntities().iterator())
                 .filter(node -> node.getDescriptor() instanceof RdProjectFolderDescriptor)
+                .filter(node -> !ignoredDirectoryNames.contains(node.getName().toLowerCase()))
                 .map(this::nodeFullRelativePath)
                 .collect(Collectors.toSet());
 
