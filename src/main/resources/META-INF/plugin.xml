@@ -2,7 +2,7 @@
     <id>com.reallyliri.plugins.no-namespace-providers</id>
     <name>No Namespace Providers</name>
     <vendor url="https://github.com/reallyliri">ReallyLiri</vendor>
-    <version>1.5.1</version>
+    <version>1.6</version>
     <idea-version since-build="211.5787" />
 
     <description>Automatically mark all directories in your projects as not a namespace providers.</description>
