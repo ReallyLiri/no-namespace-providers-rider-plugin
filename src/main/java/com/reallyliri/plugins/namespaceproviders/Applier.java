@@ -28,6 +28,8 @@ public class Applier {
     private final Map<String, Set<String>> directoriesPathsByProject = new HashMap<>();
     private final Set<String> ignoredDirectoryNames = Set.of(
         ".idea",
+        "node_modules",
+        "vendor",
         "bin",
         "bld",
         "build",
@@ -44,6 +46,21 @@ public class Applier {
         "netcoreapp3.1",
         "net5.0"
     );
+
+    public int applyFromProjects(Set<Path> csProjPaths) throws IOException {
+        int updates = 0;
+        for (Path csProjPath : csProjPaths) {
+            updates += applyFromProject(csProjPath);
+        }
+        return updates;
+    }
+
+    private int applyFromProject(Path csProjPath) throws IOException {
+        Set<Path> nodePaths = new HashSet<>();
+        Path projDirectoryPath = csProjPath.getParent();
+        collectChildFolders(projDirectoryPath, nodePaths);
+        return apply(csProjPath.toString(), nodePaths.stream().map(projDirectoryPath::relativize).map(Path::toString).collect(Collectors.toSet()));
+    }
 
     public int apply(ProjectModelEntity parentNode, boolean applyFullTree) throws IOException {
         return (parentNode.getDescriptor() instanceof RdSolutionDescriptor)
@@ -65,6 +82,18 @@ public class Applier {
             .collect(Collectors.toSet());
 
         return apply(projectPath, nodePaths);
+    }
+
+    private void collectChildFolders(Path parentPath, Set<Path> children) throws IOException {
+        Set<Path> directoryPaths = Files.walk(parentPath, 1)
+            .filter(path -> !path.equals(parentPath))
+            .filter(Files::isDirectory)
+            .filter(path -> !ignoredDirectoryNames.contains(path.getFileName().toString().toLowerCase()))
+            .collect(Collectors.toSet());
+        for (Path directoryPath : directoryPaths) {
+            children.add(directoryPath);
+            collectChildFolders(directoryPath, children);
+        }
     }
 
     private void collectChildFolders(ProjectModelEntity parentNode, List<ProjectModelEntity> nodes, boolean recursive) {
@@ -127,7 +156,7 @@ public class Applier {
                 continue;
             }
             log.info(String.format("Setting directory '%s' of project '%s' as not a namespace provider", directoryPath, projectPath));
-            dotSettingsContent = dotSettingsContent.replace("</wpf:ResourceDictionary>", "\t" + notNamespaceProviderLine + "\n</wpf:ResourceDictionary>");
+            dotSettingsContent = dotSettingsContent.replace("</wpf:ResourceDictionary>", "\n\t" + notNamespaceProviderLine + "\n</wpf:ResourceDictionary>");
             updated++;
         }
 

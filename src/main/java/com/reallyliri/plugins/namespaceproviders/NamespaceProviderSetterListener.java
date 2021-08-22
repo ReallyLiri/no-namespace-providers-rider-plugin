@@ -10,11 +10,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.rider.model.RdCustomLocation;
 import com.jetbrains.rider.model.RdSolutionDescriptor;
 import com.jetbrains.rider.projectView.views.solutionExplorer.SolutionExplorerCustomization;
 import com.jetbrains.rider.projectView.workspace.ProjectModelEntity;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public class NamespaceProviderSetterListener extends SolutionExplorerCustomization {
@@ -44,7 +47,11 @@ public class NamespaceProviderSetterListener extends SolutionExplorerCustomizati
         public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
             try {
                 if (root != null) {
-                    int updated = applier.apply(root, true);
+
+                    String slnFilePath = ((RdCustomLocation) root.getDescriptor().getLocation()).getCustomLocation();
+                    Set<Path> csProjPaths = SlnParser.extractProjectPaths(Path.of(slnFilePath));
+
+                    int updated = applier.applyFromProjects(csProjPaths);
                     Notifications.Bus.notify(new Notification(
                         Notifications.SYSTEM_MESSAGES_GROUP_ID,
                         "No-Namespace-Providers",
