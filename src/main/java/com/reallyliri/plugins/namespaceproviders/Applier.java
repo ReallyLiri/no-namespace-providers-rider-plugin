@@ -33,7 +33,16 @@ public class Applier {
         "build",
         "logs",
         "obj",
-        "target"
+        "target",
+        "resources",
+        "x64",
+        "x86",
+        "amd64",
+        "netcoreapp2.1",
+        "netcoreapp2.2",
+        "netcoreapp3.0",
+        "netcoreapp3.1",
+        "net5.0"
     );
 
     public int apply(ProjectModelEntity parentNode, boolean applyFullTree) throws IOException {
