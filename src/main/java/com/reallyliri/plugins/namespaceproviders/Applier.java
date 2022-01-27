@@ -44,7 +44,8 @@ public class Applier {
         "netcoreapp2.2",
         "netcoreapp3.0",
         "netcoreapp3.1",
-        "net5.0"
+        "net5.0",
+        "net6.0"
     );
 
     public int applyFromProjects(Set<Path> csProjPaths) throws IOException {
@@ -197,7 +198,7 @@ public class Applier {
     private String notNamespaceProviderLine(String relativeDirectoryPath) {
         return
             "<s:Boolean x:Key=\"/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=" +
-                relativeDirectoryPath.toLowerCase().replace(File.separator, "_005C") +
+                relativeDirectoryPath.toLowerCase().replace("/", "_005C").replace("\\", "_005C") +
                 "/@EntryIndexedValue\">True</s:Boolean>";
     }
 
