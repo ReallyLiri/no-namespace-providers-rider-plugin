@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         // https://mvnrepository.com/artifact/com.jetbrains.rd/rd-gen
-        classpath("com.jetbrains.rd:rd-gen:2023.3.2")
+        classpath("com.jetbrains.rd:rd-gen:2022.2.6")
     }
 }
 
@@ -22,16 +22,16 @@ repositories {
 }
 
 group 'com.reallyliri.plugins'
-version '1.9'
+version '1.9.1'
 
 compileKotlin {
     kotlinOptions { jvmTarget = "17" }
 }
 
 intellij {
-    // see https://www.jetbrains.com/intellij-repository/snapshots
+    // see https://www.jetbrains.com/intellij-repository/snapshots or https://www.jetbrains.com/intellij-repository/releases/
     type = 'RD'
-    version = "2023.3-SNAPSHOT"
+    version = "2022.2.4"
     downloadSources = true
 }
 
