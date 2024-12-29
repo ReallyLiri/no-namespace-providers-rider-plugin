@@ -3,7 +3,7 @@
     <name>No Namespace Providers</name>
     <vendor url="https://github.com/reallyliri">ReallyLiri</vendor>
     <version>1.8</version>
-    <idea-version since-build="222.*" />
+    <idea-version since-build="233" />
 
     <description>Automatically mark all directories in your projects as not a namespace providers.</description>
 
